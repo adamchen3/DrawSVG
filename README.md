@@ -16,8 +16,25 @@ This will create a  folder with all the source files.
 
 ### Build Instructions
 
-In order to ease the process of running on different platforms, we will be using [CMake](http://www.cmake.org/) for our assignments. You will need a CMake installation of version 2.8+ to build the code for this assignment. It should also be relatively easy to build the assignment and work locally on your OSX or 64-bit version of Linux. Building on Windows is in beta support, and the project can be run by SSH'ing through Andrew Linux using MobaXterm. Building on ARM (e.g. Raspberry Pi, some Chromebooks) is currently not supported.
+In order to ease the process of running on different platforms, we will be using [CMake](http://www.cmake.org/) for our assignments. You will need a CMake installation of version 2.8+ to build the code for this assignment. It should also be relatively easy to build the assignment and work locally on Windows, OSX or 64-bit version of Linux. Building on ARM (e.g. Raspberry Pi, some Chromebooks) is currently not supported.
 
+#### VSCode Build Instructions (All Platforms)
+
+We recommend using [Visual Studio Code](https://code.visualstudio.com/download) on all platforms. Once you install CMake and VSCode, you will also need to install the C/C++ extension within VSCode.
+
+The build and launch data is contained within the `.vscode` directory. Select the folder for your compiler and move `launch.json` and `tasks.json` up one level into the `.vscode` directory. To set commandline arguments, go to `launch.json` and add them within `args`. For example, to run the program with test 1, you would add `./basic/test1.svg`. You can build using <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> and debug using <kbd>F5</kbd>. If you feel that your program is running slowly, you can also change the build mode to `Release` from `Debug`.
+
+Commonly used Hotkeys:
+- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> - Build
+- <kbd>F5</kbd> - Debug
+  - <kbd>F9</kbd> - Toggle Breakpoint
+  - <kbd>F10</kbd> - Step Over
+  - <kbd>F11</kbd> - Step Into
+  - <kbd>Shift</kbd>+<kbd>F5</kbd> - Stop
+- <kbd>Ctrl</kbd>+<kbd>P</kbd> - Search for file
+- <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> - Run Command
+- Right click to go to definition/declaration/references
+  
 #### OS X/Linux Build Instructions
 
 If you are working on OS X and do not have CMake installed, we recommend installing it through [Homebrew](http://brew.sh/): `$ brew install cmake`.  You may also need the freetype package `$ brew install freetype`.
@@ -34,7 +51,7 @@ $ make
 
 These steps (1) create an out-of-source build directory, (2) configure the project using CMake, and (3) compile the project. If all goes well, you should see an executable `drawsvg` in the build directory. As you work, simply typing `make` in the build directory will recompile the project.
 
-#### Windows Build Instructions
+#### Windows Build Instructions using Visual Studio
 
 We have a beta build support for Windows systems. You need to install the latest version of [CMake](http://www.cmake.org/) and install [Visual Studio Community 2017](https://visualstudio.microsoft.com/vs/). After installing these programs, you can run `runcmake_win.bat` by double-clicking on it. This should create a `build` directory with a Visual Studio solution file in it named `drawsvg.sln`. You can double-click this file to open the solution in Visual Studio.
 
@@ -42,7 +59,7 @@ If you plan on using Visual Studio to debug your program, you can change `drawsv
 
 If you feel that your program is running slowly, you can also change the build mode to `Release` from `Debug` by clicking the Solution Configurations drop down menu on the top menu bar. Note that you will have to set `Command Arguments` again if you change the build mode.
 
-#### Windows build instructions using CLion 
+#### Windows Build Instructions Using CLion 
 
 (tested on CLion 2018.3)
 
