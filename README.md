@@ -120,11 +120,30 @@ Other controls:
 
 ### What You Need to Do
 
-The assignment is divided into nine major tasks, which are described below in the order the course staff suggests you attempt them. You are of course allowed to do the assignment in any order you choose. Although you have 2 weeks to complete this assignment, the assignment **involves significant implementation effort. Also, be advised that meeting the requirements of later tasks may involve restructuring code that you implemented in earlier ones.** In short: you are highly advised to aim to complete the first three tasks in the first week of the assignment.
+![Tasks](misc/tasks.png?raw=true)
+
+The assignment is divided into nine major tasks, which are described below in the order the course staff suggests you attempt them. You are of course allowed to do the assignment in any order you choose. Although you have a little over 2 weeks to complete this assignment, the assignment **involves significant implementation effort. Also, be advised that meeting the requirements of later tasks may involve restructuring code that you implemented in earlier ones.** We have split the assignment into a checkpoint and final submission to ensure you do not fall behind. Please consult the schedule on the course webpage for checkpoint and final due dates.
+
+### Grading
+
+DrawSVG is made by humans, and will be graded by humans. We are not asking for a pixel-perfect recreation of the reference solution. Floating-point arithmetic on different architectures may lead to subtle inconsistencies that may make your solution a few pixels different than the reference. You should instead aim to have the bigger picture down: lines are in the general same area and thickness, no gaps in triangle fills, etc. It should be clear that if we held the two images together side by side, there shouldn't be a difference to the human eye (we're looking for eye-level differences, not pixel level differences). If you are unsure about grading, feel free to ask on piazza.
+
+Please make sure that your submission builds when submitting to Autolab. Check the assignment details on the course website for instructions on how to tar your files. We will run an autograding script to make sure you've included all the necessary filles and to ensure your program complies on the Gates 5 machines. If you receive  a negative score, Autolab will provide you feedback on what you need to fix in your program before submitting. You have unlimited submissions.
+
+### Friendly Advice from your TAs 
+
+- As always, start early. There is a lot to implement in this assignment, so don't fall behind!
+- Open `.../DrawSVG/CMU462/docs/html/index.html` with a browser to see documentation of many utility classes, **especially the ones related to vectors and matrices**.
+- Be careful with memory allocation, as too many or too frequent heap allocations will severely degrade performance.
+- Be careful with types (e.g. float, double, int, uint8_t), casting, and using the right functions for each type.
+- While C has many pitfalls, C++ introduces even more wonderful ways to shoot yourself in the foot. Later assignments will require you to use C++ classes and objects, so take the time to learn the new features C++ introduces. 
+- Currently, DrawSVG does not support rendering `<circle>` svg elements (which is different from `<ellipse>`).
 
 #### Getting Acquainted with the Starter Code
 
 Before you start, here are some basic information on the structure of the starter code.
+
+![Pipeline](misc/pipeline.png?raw=true)
 
 All the source code files are contained in `src` directory. You're welcome to browse through and/or edit any file, but the following ones and their headers are probably the most relevant:
 
@@ -133,17 +152,18 @@ All the source code files are contained in `src` directory. You're welcome to br
 - `viewport` (task 5)
 - `texture` (tasks 6, 7)
 
-Most of your work will be constrained to implementing part of the class `SoftwareRendererImp` in `software_renderer.cpp`. The most important method is `draw_svg` which (not surprisingly) accepts an SVG object to draw. An SVG file defines its canvas (which defines a 2D coordinate space), and specifies a list of shape elements (such as points, lines, triangles, and images) that should be drawn on that canvas. Each shape element has a number of style parameters (e.g., color) as well as a modeling transform used to determine the element's position on the canvas. You can find the definition of the SVG class (and all the associated `SVGElements`) in `svg.h`. Notice that one type of `SVGElement` is a group that itself contains child elements. Therefore, you should think of an SVG file as defining a tree of shape elements. (Interior nodes of the tree are groups, and leaves are shapes.)
+Most of your work will be constrained to implementing part of the class `SoftwareRendererImp` in `software_renderer.cpp`. The `SoftwareRendererImp` class is derived from the `SoftwareRenderer` and `SoftwareRendererRef` classes. **Please do not modify `SoftwareRenderer` or `SoftwareRendererRef` or else your program will crash**. The most important method is `draw_svg` which (not surprisingly) accepts an SVG object to draw. An SVG file defines its canvas (which defines a 2D coordinate space), and specifies a list of shape elements (such as points, lines, triangles, and images) that should be drawn on that canvas. Each shape element has a number of style parameters (e.g., color) as well as a modeling transform used to determine the element's position on the canvas. You can find the definition of the SVG class (and all the associated `SVGElements`) in `svg.h`. Notice that one type of `SVGElement` is a group that itself contains child elements. Therefore, you should think of an SVG file as defining a tree of shape elements. (Interior nodes of the tree are groups, and leaves are shapes.)
 
 Another important method on the `SoftwareRendererImp` class is `set_render_target()`, which provides your code a buffer corresponding to the output image (it also provides width and height of the buffer in pixels, which are stored locally as `target_w` and `target_h`). This buffer is often called the "render target" in many applications, since it is the "target" of rendering commands. **We use the term pixel here on purpose because the values in this buffer are the values that will be displayed on screen.** Pixel values are stored in row-major format, and each pixel is an 8-bit RGBA value (32 bits in total). Your implementation needs to fill in the contents of this buffer when it is asked to draw an SVG file.
 
 `set_render_target()` is called whenever the user resizes the application window.
 
+
 #### A Simple Example: Drawing Points
 
 You are given starter code that already implements drawing of 2D points. To see how this works, begin by taking a look at `draw_svg()` in `software_renderer.cpp`. The method accepts an SVG file, and draws all elements in the SVG file via a sequence of calls to `draw_element()`. For each element `draw_element()` inspects the type of the element, and then calls the appropriate draw function. In the case of points, that function is `draw_point()`.
 
-The position of each point is defined in a local coordinate frame, so `draw_point()` first transforms the input point into its screen-space position (see line `p_screen = transform(p)`). This transform is set at the beginning of `draw_svg()`. In the starter code, this transform converts from the svg canvas' coordinate system to screen coordinates. You will need to handle more complex transforms to support more complex SVG files and implement mouse viewing controls later in the assignment.
+The position of each point is defined in a local coordinate frame, so `draw_point()` first transforms the input point into its screen-space position (see line `Vector2D p = transform(point.position)`). This transform is set at the beginning of `draw_svg()`. In the starter code, this transform converts from the svg canvas' coordinate system to screen coordinates. You will need to handle more complex transforms to support more complex SVG files and implement mouse viewing controls later in the assignment.
 
 The function `rasterize_point()` is responsible for actually drawing the point. In this assignment we define screen space for an output image of size `(target_w, target_h)` as follows:
 
@@ -184,9 +204,9 @@ At this time the starter code does not correctly handle transparent points. We'l
 
 #### Task 1: Hardware Renderer
 
-In this task, you will finish implementing parts of the hardware renderer by using the knowledge from the OpenGL tutorial session. In particular, you will be responsible for implementing `rasterize_point()`, `rasterize_line()`, and `rasterize_triangle()` in `hardware/hardware_renderer.cpp`. All other OpenGL context has been set up for you outside of these methods, so you only need to use `glBegin()`, `glEnd()`, and appropriate function calls in between those two functions. (You may be interested in `glColor4f()` and `glVertex2f()`, along with `GL_POINTS`, `GL_LINES`, and `GL_TRIANGLES`.)
+In this task, you will finish implementing parts of the hardware renderer using OpenGL. In particular, you will be responsible for implementing `rasterize_point()`, `rasterize_line()`, and `rasterize_triangle()` in `hardware/hardware_renderer.cpp`. All other OpenGL context has been set up for you outside of these methods, so you only need to use `glBegin()`, `glEnd()`, and appropriate function calls in between those two functions. (You may be interested in `glColor4f()` and `glVertex2f()`, along with `GL_POINTS`, `GL_LINES`, and `GL_TRIANGLES`.) You can find an extensive guide to OpenGL [here](http://altanmesut.trakya.edu.tr/grafik/OpenGL_Programming_Guide.pdf), but feel free to google function names for quick documentation.
 
-Once you're done, you can test your solution by pressing `h`.
+Once you're done, you can test your solution by running DrawSVG and pressing `h`.
 
 #### Task 2 : Warm Up: Drawing Lines
 
@@ -340,19 +360,6 @@ Please name this file `task9.svg`.
 We have provided you with a couple of examples of subdividing complex, smooth complex shapes into much simpler triangles in `/subdiv`. Subdivision is something you will dig into in great detail in the next assignment. You can see subdivision in action as you step though the test files we provided.
 
 In addition to what you have implemented already, the [SVG Basic Shapes](http://www.w3.org/TR/SVG/shapes.html) also include circles and ellipses. We may support these features by converting them to triangulated polygons. But if we zoom in on the edges, there will be a point at which the approximation breaks down and the image no longer will look like a smooth curve. Triangulating more finely can be costly as a large number of triangles may be necessary to get a good approximation. Is there a better way to sample these shapes? For example, implement `draw_ellipse` in `software_renderer.cpp` and `hardware/hardware_renderer.cpp` (2 pts).
-
-
-### Friendly Advice from your TAs
-
-- As always, start early. There is a lot to implement in this assignment, and no official checkpoint, so don't fall behind!
-- Open `.../DrawSVG/CMU462/docs/html/index.html` with a browser to see documentation of many utility classes, especially the ones related to vectors and matrices.
-- Be careful with memory allocation, as too many or too frequent heap allocations will severely degrade performance.
-- Be careful with types (e.g. float, double, int, uint8_t), casting, and using the right functions for each type.
-- While C has many pitfalls, C++ introduces even more wonderful ways to shoot yourself in the foot. It is generally wise to stay away from as many features as possible, and make sure you fully understand the features you do use.
-- The reference solution is **for reference only**, and we compare your result to reference solution only qualitatively. It contains bugs, too, for example sometimes lines are not drawn when its endpoints are offscreen, and lines get thinner when supersampling. So don't panic if number of pixels different from reference seems large. Still, looking at that diff image could be a good sanity check.
-- We also mostly run your code with svg files in the `basic` folder, so don't worry too much about the hardcore ones.
-- Currently, DrawSVG does not support rendering `<circle>` svg elements (which is different from `<ellipse>`).
-
 
 ### Resources and Notes
 
