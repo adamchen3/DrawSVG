@@ -145,6 +145,8 @@ Before you start, here are some basic information on the structure of the starte
 
 ![Pipeline](misc/pipeline.png?raw=true)
 
+The program reads in an SVG and initiates the window via context setup. The SVG is then parsed into a set of primitives, and the `draw_elements` function is called on each SVG element, rasterizing the primitives to pixels in the sample buffer. Pixels in the sample buffer are then filtered in the `resolve` function and sent to the target buffer where they are displayed onscreen. The above diagram illustrates how each task falls into the pipeline. The sample buffer takes multiple samples per pixel, and adjacent pixels in the sample buffer are averaged together for each target buffer pixel.
+
 All the source code files are contained in `src` directory. You're welcome to browse through and/or edit any file, but the following ones and their headers are probably the most relevant:
 
 - `hardware/hardware_renderer` (task 1)
