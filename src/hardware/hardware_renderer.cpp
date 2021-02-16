@@ -63,16 +63,12 @@ void HardwareRenderer::draw_svg( SVG& svg ) {
   Vector2D c = transform(Vector2D(    0    ,svg.height)); c.x--; c.y++;
   Vector2D d = transform(Vector2D(svg.width,svg.height)); d.x++; d.y++;
 
-  rasterize_line(a.x, a.y, b.x, b.y, Color::Black);
-  rasterize_line(a.x, a.y, c.x, c.y, Color::Black);
-  rasterize_line(d.x, d.y, b.x, b.y, Color::Black);
-  rasterize_line(d.x, d.y, c.x, c.y, Color::Black);
-
-  // resolve and send to render target
-  // resolve();
+  rasterize_line((float)a.x, (float)a.y, (float)b.x, (float)b.y, Color::Black);
+  rasterize_line((float)a.x, (float)a.y, (float)c.x, (float)c.y, Color::Black);
+  rasterize_line((float)d.x, (float)d.y, (float)b.x, (float)b.y, Color::Black);
+  rasterize_line((float)d.x, (float)d.y, (float)c.x, (float)c.y, Color::Black);
 
   leave2DDrawing();
-
 }
 
 void HardwareRenderer::draw_element( SVGElement* element ) {

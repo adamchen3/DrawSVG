@@ -45,7 +45,7 @@ if(APPLE)
 
       set(CLANG_CXX_FLAGS "-std=c++11 -m64")
 
-      if(CMU462_BUILD_DEBUG)
+      if(CMU462_BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
         set(CMAKE_BUILD_TYPE Debug)
       else(CMU462_BUILD_DEBUG)
         set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -O3")
@@ -63,7 +63,7 @@ if(APPLE)
 
       set(GCC_CXX_FLAGS "-std=gnu++11 -m64")
 
-      if(CMU462_BUILD_DEBUG)
+      if(CMU462_BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
         set(CMAKE_BUILD_TYPE Debug)
       else(CMU462_BUILD_DEBUG)
         set(GCC_CXX_FLAGS "${GCC_CXX_FLAGS} -O3")
@@ -81,7 +81,10 @@ endif(APPLE)
 ##################
 # Build on Linux #
 ##################
-set(LINUX UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
+  set(LINUX)
+endif()
+
 if(LINUX)
 
   # GCC only
@@ -126,8 +129,6 @@ if(WIN32)
 
   if(MSVC)
 
-    set(MSVC_CXX_FLAGS "-std=gnu++11")
-
     if(CMU462_BUILD_DEBUG)
         set(CMAKE_BUILD_TYPE Debug)
     else(CMU462_BUILD_DEBUG)
@@ -140,8 +141,6 @@ if(WIN32)
   endif(MSVC)
 
   if(MINGW)
-
-    set(MSVC_CXX_FLAGS "-std=gnu++11")
 
     if(CMU462_BUILD_DEBUG)
         set(CMAKE_BUILD_TYPE Debug)

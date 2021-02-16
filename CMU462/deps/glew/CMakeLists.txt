@@ -7,8 +7,7 @@ include_directories(${GLEW_HEADER_DIR})
 
 add_library(glew 
 ${GLEW_SOURCE_DIR}/glew.c
-${GLEW_SOURCE_DIR}/glewinfo.c
-${GLEW_SOURCE_DIR}/visualinfo.c)
+${GLEW_SOURCE_DIR}/glewinfo.c)
 
 set(GLEW_LIBRARIES glew PARENT_SCOPE)
 set(GLEW_INCLUDE_DIRS ${GLEW_HEADER_DIR} PARENT_SCOPE)

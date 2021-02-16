@@ -14,11 +14,11 @@ const Color Color::White  = Color(1,1,1,1);
 const Color Color::Black  = Color(0,0,0,1);
 
 Color::Color( const unsigned char* arr ) {
-  float inv = 1.0 / 255.0;
+  float inv = 1.0f / 255.0f;
   r = arr[0] * inv;
   g = arr[1] * inv;
   b = arr[2] * inv;
-  a = 1.0;
+  a = 1.0f;
 }
 
 Color Color::fromHex( const char* s ) {
@@ -44,18 +44,18 @@ Color Color::fromHex( const char* s ) {
 
   // Extract 8-byte chunks and normalize.
   Color c;
-  c.r = (float)( ( rgb & 0xFF0000 ) >> 16 ) / 255.0;
-  c.g = (float)( ( rgb & 0x00FF00 ) >>  8 ) / 255.0;
-  c.b = (float)( ( rgb & 0x0000FF ) >>  0 ) / 255.0;
+  c.r = (float)( ( rgb & 0xFF0000 ) >> 16 ) / 255.0f;
+  c.g = (float)( ( rgb & 0x00FF00 ) >>  8 ) / 255.0f;
+  c.b = (float)( ( rgb & 0x0000FF ) >>  0 ) / 255.0f;
   c.a = 1.0; // set alpha to 1 (opaque) by default
 
   return c;
 }
 
 string Color::toHex( void ) const {
-  int R = (unsigned char) max( 0., min( 255.0, 255.0 * r ));
-  int G = (unsigned char) max( 0., min( 255.0, 255.0 * g ));
-  int B = (unsigned char) max( 0., min( 255.0, 255.0 * b ));
+  int R = (unsigned char) max( 0.f, min( 255.0f, 255.0f * r ));
+  int G = (unsigned char) max( 0.f, min( 255.0f, 255.0f * g ));
+  int B = (unsigned char) max( 0.f, min( 255.0f, 255.0f * b ));
 
   stringstream ss;
   ss << hex;

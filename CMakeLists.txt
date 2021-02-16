@@ -33,7 +33,7 @@ if(APPLE)
 
     set(CLANG_CXX_FLAGS "-std=c++11 -m64")
 
-    if(BUILD_DEBUG)
+    if(BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
       set(CMAKE_BUILD_TYPE Debug)
     else(BUILD_DEBUG)
       set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -O3")
@@ -67,7 +67,9 @@ endif(APPLE)
 ##################
 # Build on Linux #
 ##################
-set(LINUX UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
+  set(LINUX)
+endif()
 if(LINUX)
 
   # GCC only
@@ -112,7 +114,6 @@ if(WIN32)
 
   if(MSVC)
 
-    set(MSVC_CXX_FLAGS "-std=gnu++11")
     set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MD")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MD")
 

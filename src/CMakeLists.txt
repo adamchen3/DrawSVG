@@ -83,7 +83,19 @@ if (APPLE) # Frameworks required on osx
     ${IOKIT_LIBRARIES}
     ${COREVIDEO_LIBRARIES}
   )
-else(UNIX)  #LINUX
+endif()
+
+if(WIN32)
+target_link_libraries( drawsvg drawsvg_hdwr drawsvg_ref
+    ${CMU462_LIBRARIES}
+    ${GLEW_LIBRARIES}
+    ${GLFW_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+)
+endif()
+
+if(UNIX AND NOT APPLE)  #LINUX
 target_link_libraries( drawsvg drawsvg_hdwr drawsvg_ref
     ${CMU462_LIBRARIES}
     ${GLEW_LIBRARIES}
