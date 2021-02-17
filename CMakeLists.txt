@@ -35,12 +35,12 @@ if(APPLE)
 
     if(BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
       set(CMAKE_BUILD_TYPE Debug)
-    else(BUILD_DEBUG)
+    else(BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
       set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -O3")
       set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -funroll-loops")
       set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-narrowing")
       set(CLANG_CXX_FLAGS "${CLANG_CXX_FLAGS} -Wno-deprecated-register")
-    endif(BUILD_DEBUG)
+    endif(BUILD_DEBUG OR CMAKE_BUILD_TYPE MATCHES "Debug")
 
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CLANG_CXX_FLAGS}")
 
