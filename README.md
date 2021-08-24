@@ -135,7 +135,7 @@ Please make sure that your submission builds when submitting to Autolab. Check t
 - As always, start early. There is a lot to implement in this assignment, so don't fall behind!
 - Open `.../DrawSVG/CMU462/docs/html/index.html` with a browser to see documentation of many utility classes, **especially the ones related to vectors and matrices**.
 - Be careful with memory allocation, as too many or too frequent heap allocations will severely degrade performance.
-- Be careful with types (e.g. float, double, int, uint8_t), casting, and using the right functions for each type.
+- Be careful with types (e.g. float, double, int, uint8_t), casting, and using the right functions for each type. Take note of the `uint8_to_float` and `float_to_uint8` functions in `texture.cpp`, which you may find helpful for later tasks.
 - While C has many pitfalls, C++ introduces even more wonderful ways to shoot yourself in the foot. Later assignments will require you to use C++ classes and objects, so take the time to learn the new features C++ introduces. 
 - Currently, DrawSVG does not support rendering `<circle>` svg elements (which is different from `<ellipse>`).
 
@@ -284,7 +284,7 @@ In previous lectures we discussed how it is common (and often very useful) to de
 
 Recall that an SVG object consists of a hierarchy of shape elements. Each element in an SVG is associated with a modeling transform (see `SVGElement.transform` in `svg.h`) that defines the relationship between the object's local coordinate space and the parent element's coordinate space. At present, the implementation of `draw_element()`ignores these modeling transforms, so the only SVG objects your renderer has been able to correctly draw were objects that contained only identity modeling transforms.
 
-Please modify `draw_svg()` and `draw_element()` to implement the hierarchy of transforms specified in the SVG object. (You can do this in no more than a few lines of code.)
+Please modify `draw_svg()` and `draw_element()` to implement the hierarchy of transforms specified in the SVG object. (You can do this in no more than a few lines of code.) You're also free to add code to `software_renderer.h`, though minimal changes should be necessary for this task.
 
 When you are done, you should be able to draw `basic/test6.svg`.
 
@@ -352,6 +352,11 @@ Now that you have implemented a few basic features of the SVG format, it is time
 You can create an SVG file in popular design tools like Adobe Illustrator or Inkscape and export SVG files, or use a variety of editors online. Since an SVG file is just an XML file, you could even use a text editor or write a script to generate the text!
 
 Be aware that our starter code and your renderer implementation only support a **subset** of the features defined in the SVG specification, and applications like Adobe Illustrator or Inkscape may not always encode shapes with the primitives we support. (You may need to convert complicated paths to the basic primitives in these tools. This [Path to Polygon Converter](https://betravis.github.io/shape-tools/path-to-polygon/) might be of use.)
+
+If you're using InkScape, and you save your drawing in InkScape as an `InkScape` svg or `Plain` svg, the entire drawing will appear black in DrawSVG.
+To work around this, you should instead save it as an `Optimized SVG`. In the resulting dialog, be sure to select `Convert CSS attributes to XML attributes`, and *deselect* `Shorten color values`.
+
+If you're using Illustrator, and you get errors with opening your generated SVG file in DrawSVG, make sure your `<svg>` tag contains a `width` and `height` field, with set values. Look at the test case SVGs in the `svg/` folder for reference. 
 
 Please name this file `task9.svg`.
 

@@ -44,7 +44,7 @@ class Color {
    */
   Color( const unsigned char* arr );
 
-  // Addition. Alpha is ignored.
+  // Addition.
   inline Color operator+( const Color& rhs ) const {
     return Color( r + rhs.r, g + rhs.g, b + rhs.b, a + rhs.a);
   }
@@ -54,7 +54,7 @@ class Color {
     return *this;
   }
 
-  // Vector multiplication. Alpha is ignored.
+  // Vector multiplication.
   inline Color operator*( const Color& rhs ) const {
     return Color( r * rhs.r, g * rhs.g, b * rhs.b, a * rhs.a);
   }
