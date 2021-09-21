@@ -208,7 +208,7 @@ At this time the starter code does not correctly handle transparent points. We'l
 
 In this task, you will finish implementing parts of the hardware renderer using OpenGL. In particular, you will be responsible for implementing `rasterize_point()`, `rasterize_line()`, and `rasterize_triangle()` in `hardware/hardware_renderer.cpp`. All other OpenGL context has been set up for you outside of these methods, so you only need to use `glBegin()`, `glEnd()`, and appropriate function calls in between those two functions. (You may be interested in `glColor4f()` and `glVertex2f()`, along with `GL_POINTS`, `GL_LINES`, and `GL_TRIANGLES`.) You can find an extensive guide to OpenGL [here](http://altanmesut.trakya.edu.tr/grafik/OpenGL_Programming_Guide.pdf), but feel free to google function names for quick documentation.
 
-Once you're done, you can test your solution by running DrawSVG and pressing `h`.
+Once you're done, you can test your solution by running DrawSVG and pressing `h`. Your hardware renderer should now be able to correctly render all tests in `basic/` and `alpha/`, and implementing the remaining tasks will add functionality to your software renderer. Remember to compare your render results with the reference, and make sure there are no major visual differences.
 
 #### Task 2 : Warm Up: Drawing Lines
 
