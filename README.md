@@ -122,7 +122,7 @@ Other controls:
 
 ![Tasks](misc/tasks.png?raw=true)
 
-The assignment is divided into nine major tasks, which are described below in the order the course staff suggests you attempt them. You are of course allowed to do the assignment in any order you choose. Although you have a little over 2 weeks to complete this assignment, the assignment **involves significant implementation effort. Also, be advised that meeting the requirements of later tasks may involve restructuring code that you implemented in earlier ones.** We have split the assignment into a checkpoint and final submission to ensure you do not fall behind. Please consult the schedule on the course webpage for checkpoint and final due dates.
+The assignment is divided into nine major tasks, which are described below in the order the course staff suggests you attempt them. You are of course allowed to do the assignment in any order you choose. Although you have a little over 2 weeks to complete this assignment, the assignment **involves significant implementation effort. Also, be advised that meeting the requirements of later tasks may involve restructuring code that you implemented in earlier ones.** We have split the assignment into a checkpoint and final submission to ensure you do not fall behind. Please consult the schedule on the course webpage for checkpoint and final due dates. Checkpoint for this assignment entails fully implementing tasks 1-4, and the final entails fully implementing tasks 5-8. All extra credit code you write for tasks 1-8 will be graded along with final, so don't worry too much about trying to get them done for the checkpoint, and instead focus more on completing the tasks themselves :)
 
 ### Grading
 
