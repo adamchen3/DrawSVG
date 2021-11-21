@@ -260,27 +260,61 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
   }
 
   /** Bresenham start **/
+  //dy = y1 - y0;
+  //dx = x1 - x0;
+  //x_start = (int)round(x0);
+  //x_end = (int)round(x1);
+  //y_start = (int)round(y0);
+
+  //float error = 0;
+  //for (int i = x_start; i <= x_end; i++) {
+  //    if (steep) {
+  //        rasterize_point(y_start, i, color);
+  //    }
+  //    else {
+  //        rasterize_point(i, y_start, color);
+  //    }
+  //    error += 2 * abs(dy);
+  //    if (abs(error) >= dx) {
+  //        y_start += (dy > 0 ? 1 : -1);
+  //        error -= 2 * dx;
+  //    }
+  //}
+  /** Bresenham end **/
+
+  /** Xiaolin Wu's line algorithm */
   dy = y1 - y0;
   dx = x1 - x0;
   x_start = (int)round(x0);
   x_end = (int)round(x1);
-  y_start = (int)round(y0);
+  float slope = dy / dx;
+  float y_f = y0 + slope * (x_start - x0);
 
-  float error = 0;
   for (int i = x_start; i <= x_end; i++) {
-      if (steep) {
-          rasterize_point(y_start, i, color);
-      }
-      else {
-          rasterize_point(i, y_start, color);
-      }
-      error += 2 * abs(dy);
-      if (abs(error) >= dx) {
-          y_start += (dy > 0 ? 1 : -1);
-          error -= 2 * dx;
-      }
+    float y_start = (int)floor(y_f);
+    float y_l = y_f + 0.5 * slope;
+    float y_c = y_start + 0.5;
+    float dis = abs(y_c - y_l);
+    float dis2;
+    int index;
+    if (abs(y_c + 1 - y_l) < abs(y_c - 1 - y_l)) {
+      index = 1;
+      dis2 = abs(y_c + 1 - y_l);
+    }
+    else {
+      index = -1;
+      dis2 = abs(y_c - 1 - y_l);
+    }
+    if (steep) {
+      rasterize_point(y_start, i, color * (1 - dis));
+      rasterize_point(y_start + index, i, color * (1 - dis2));
+    }
+    else {
+      rasterize_point(i, y_start, color * (1 - dis));
+      rasterize_point(i, y_start + index, color * (1 - dis2));
+    }
+    y_f += slope;
   }
-  /** Bresenham end **/
 }
 
 void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
