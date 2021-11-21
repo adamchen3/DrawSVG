@@ -244,6 +244,43 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
 
   // Task 2: 
   // Implement line rasterization
+  int  x_start, x_end, y_start;
+  bool steep = false; // 是不是以y方向为递增
+  float dy = abs(y0 - y1);
+  float dx = abs(x0 - x1);
+  if (dy > dx) {
+    std::swap(x0, y0);
+  std:swap(x1, y1);
+    steep = true;
+  }
+
+  if (x0 > x1) {
+    std::swap(x0, x1);
+    std::swap(y0, y1);
+  }
+
+  /** Bresenham start **/
+  dy = y1 - y0;
+  dx = x1 - x0;
+  x_start = (int)round(x0);
+  x_end = (int)round(x1);
+  y_start = (int)round(y0);
+
+  float error = 0;
+  for (int i = x_start; i <= x_end; i++) {
+      if (steep) {
+          rasterize_point(y_start, i, color);
+      }
+      else {
+          rasterize_point(i, y_start, color);
+      }
+      error += 2 * abs(dy);
+      if (abs(error) >= dx) {
+          y_start += (dy > 0 ? 1 : -1);
+          error -= 2 * dx;
+      }
+  }
+  /** Bresenham end **/
 }
 
 void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
