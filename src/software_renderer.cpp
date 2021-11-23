@@ -317,13 +317,33 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
   }
 }
 
+bool coverage(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y) {
+  return true;
+}
+
 void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
                                               float x1, float y1,
                                               float x2, float y2,
                                               Color color ) {
   // Task 3: 
   // Implement triangle rasterization
-
+  // 
+  // using bounding box
+  float minx = std::min({ x0, x1, x2 });
+  float maxx = std::max({ x0, x1, x2 });
+  float miny = std::min({ y0, y1, y2 });
+  float maxy = std::max({ y0, y1, y2 });
+  int xstart = (int)floor(minx);
+  int xend = (int)ceil(maxx);
+  int ystart = (int)floor(miny);
+  int yend = (int)ceil(maxy);
+  for (int x = xstart; x < xend; x++) {
+    for (int y = ystart; y < yend; y++) {
+      if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5, y + 0.5)) {
+        rasterize_point(x, y, color);
+      }
+    }
+  }
 }
 
 void SoftwareRendererImp::rasterize_image( float x0, float y0,
