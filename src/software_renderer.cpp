@@ -280,6 +280,7 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
   //        error -= 2 * dx;
   //    }
   //}
+  //return;
   /** Bresenham end **/
 
   /** Xiaolin Wu's line algorithm */
@@ -292,8 +293,8 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
 
   for (int i = x_start; i <= x_end; i++) {
     float y_start = (int)floor(y_f);
-    float y_l = y_f + 0.5 * slope;
-    float y_c = y_start + 0.5;
+    float y_l = y_f + 0.5f * slope;
+    float y_c = y_start + 0.5f;
     float dis = abs(y_c - y_l);
     float dis2;
     int index;
@@ -318,7 +319,9 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
 }
 
 bool coverage(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y) {
-  return true;
+  float w1 = (x0 * (y2 - y0) + (y - y0) * (x2 - x0) - x * (y2 - y0)) / ((y1 - y0) * (x2 - x0) - (x1 - x0) * (y2 - y0));
+  float w2 = (y - y0 - w1 * (y1 - y0)) / (y2 - y0);
+  return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
 }
 
 void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
@@ -329,6 +332,10 @@ void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
   // Implement triangle rasterization
   // 
   // using bounding box
+  //rasterize_line(x0, y0, x1, y1, color);
+  //rasterize_line(x1, y1, x2, y2, color);
+  //rasterize_line(x2, y2, x0, y0, color);
+  //return;
   float minx = std::min({ x0, x1, x2 });
   float maxx = std::max({ x0, x1, x2 });
   float miny = std::min({ y0, y1, y2 });
@@ -339,7 +346,7 @@ void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
   int yend = (int)ceil(maxy);
   for (int x = xstart; x < xend; x++) {
     for (int y = ystart; y < yend; y++) {
-      if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5, y + 0.5)) {
+      if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y + 0.5f)) {
         rasterize_point(x, y, color);
       }
     }
