@@ -271,108 +271,107 @@ void SoftwareRendererImp::draw_triangle(Vector2D p0, Vector2D p1, Vector2D t0, V
 void SoftwareRendererImp::rasterize_line( float x0, float y0,
                                           float x1, float y1,
                                           Color color) {
-
   // Task 2: 
   // Implement line rasterization
 
   // Draw line as a triangle
   // 先处理特殊情况
-  if (x0 == x1) {
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - 1, y0 }, { x0 + 1, y0 }, { x1 + 1, y1 }, color);
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + 1, y1 }, { x1 - 1, y1 }, { x0 - 1, y0 }, color);
-  }
-  else if (y0 == y1) {
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x0, y0 - 1 }, { x1, y1 - 1 }, { x1, y1 + 1 }, color);
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x1, y1 + 1 }, { x0, y0 + 1 }, { x0, y0 - 1 }, color);
-  }
-  else {
-    Vector2D v0{ -1, 0 };
-    Vector2D v1{x1 - x0, y1 - y0};
-    float offsetY = (float)std::abs(dot(v0, v1) / v1.norm());
-    float slope = y1 - y0 / x1 - x0;
-    Vector2D v2{ 1, -1 / slope };
-    Vector2D v3{ 1, 0 };
-    float offsetX = (float)std::abs(dot(v2, v3) / v2.norm());
-    if (slope > 0) {
-      offsetY = -offsetY;
-    }
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - offsetX, y0 - offsetY }, { x0 + offsetX, y0 + offsetY  }, { x1 + offsetX, y1 + offsetY }, color);
-    draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + offsetX, y1 + offsetY }, { x1 - offsetX, y1 - offsetY }, { x0 - offsetX , y0 - offsetY }, color);
-  }
-
-
-  //int  x_start, x_end, y_start;
-  //bool steep = false; // 是不是以y方向为递增
-  //float dy = abs(y0 - y1);
-  //float dx = abs(x0 - x1);
-  //if (dy > dx) {
-  //  std::swap(x0, y0);
-  //std:swap(x1, y1);
-  //  steep = true;
+  //if (x0 == x1) {
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - 1, y0 }, { x0 + 1, y0 }, { x1 + 1, y1 }, color);
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + 1, y1 }, { x1 - 1, y1 }, { x0 - 1, y0 }, color);
+  //}
+  //else if (y0 == y1) {
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x0, y0 - 1 }, { x1, y1 - 1 }, { x1, y1 + 1 }, color);
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x1, y1 + 1 }, { x0, y0 + 1 }, { x0, y0 - 1 }, color);
+  //}
+  //else {
+  //  Vector2D v0{ -1, 0 };
+  //  Vector2D v1{x1 - x0, y1 - y0};
+  //  float offsetY = (float)std::abs(dot(v0, v1) / v1.norm());
+  //  float slope = y1 - y0 / x1 - x0;
+  //  Vector2D v2{ 1, -1 / slope };
+  //  Vector2D v3{ 1, 0 };
+  //  float offsetX = (float)std::abs(dot(v2, v3) / v2.norm());
+  //  if (slope > 0) {
+  //    offsetY = -offsetY;
+  //  }
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - offsetX, y0 - offsetY }, { x0 + offsetX, y0 + offsetY  }, { x1 + offsetX, y1 + offsetY }, color);
+  //  draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + offsetX, y1 + offsetY }, { x1 - offsetX, y1 - offsetY }, { x0 - offsetX , y0 - offsetY }, color);
   //}
 
-  //if (x0 > x1) {
-  //  std::swap(x0, x1);
-  //  std::swap(y0, y1);
-  //}
+
+  int  x_start, x_end, y_start;
+  bool steep = false; // 是不是以y方向为递增
+  float dy = abs(y0 - y1);
+  float dx = abs(x0 - x1);
+  if (dy > dx) {
+    std::swap(x0, y0);
+  std:swap(x1, y1);
+    steep = true;
+  }
+
+  if (x0 > x1) {
+    std::swap(x0, x1);
+    std::swap(y0, y1);
+  }
 
   /** Bresenham start **/
-  //dy = y1 - y0;
-  //dx = x1 - x0;
-  //x_start = (int)round(x0);
-  //x_end = (int)round(x1);
-  //y_start = (int)round(y0);
+ /* dy = y1 - y0;
+  dx = x1 - x0;
+  x_start = (int)round(x0);
+  x_end = (int)round(x1);
+  y_start = (int)round(y0);
 
-  //float error = 0;
-  //for (int i = x_start; i <= x_end; i++) {
-  //    if (steep) {
-  //        rasterize_point(y_start, i, color);
-  //    }
-  //    else {
-  //        rasterize_point(i, y_start, color);
-  //    }
-  //    error += 2 * abs(dy);
-  //    if (abs(error) >= dx) {
-  //        y_start += (dy > 0 ? 1 : -1);
-  //        error -= 2 * dx;
-  //    }
-  //}
-  //return;
+  float error = 0;
+  for (int i = x_start; i <= x_end; i++) {
+      if (steep) {
+          rasterize_point(y_start, i, color);
+      }
+      else {
+          rasterize_point(i, y_start, color);
+      }
+      error += 2 * abs(dy);
+      if (abs(error) >= dx) {
+          y_start += (dy > 0 ? 1 : -1);
+          error -= 2 * dx;
+      }
+  }
+  return;*/
   /** Bresenham end **/
 
   /** Xiaolin Wu's line algorithm */
-  //dy = y1 - y0;
-  //dx = x1 - x0;
-  //x_start = (int)round(x0);
-  //x_end = (int)round(x1);
-  //float slope = dy / dx;
-  //float y_f = y0 + slope * (x_start - x0);
+  dy = y1 - y0;
+  dx = x1 - x0;
+  x_start = (int)round(x0);
+  x_end = (int)round(x1);
+  float slope = dy / dx;
+  float y_f = y0 + slope * (x_start - x0);
 
-  //for (int i = x_start; i <= x_end; i++) {
-  //  float y_start = (int)floor(y_f);
-  //  float y_l = y_f + 0.5f * slope;
-  //  float y_c = y_start + 0.5f;
-  //  float dis = abs(y_c - y_l);
-  //  float dis2;
-  //  int index;
-  //  if (abs(y_c + 1 - y_l) < abs(y_c - 1 - y_l)) {
-  //    index = 1;
-  //    dis2 = abs(y_c + 1 - y_l);
-  //  }
-  //  else {
-  //    index = -1;
-  //    dis2 = abs(y_c - 1 - y_l);
-  //  }
-  //  if (steep) {
-  //    rasterize_point(y_start, i, color * (1 - dis));
-  //    rasterize_point(y_start + index, i, color * (1 - dis2));
-  //  }
-  //  else {
-  //    rasterize_point(i, y_start, color * (1 - dis));
-  //    rasterize_point(i, y_start + index, color * (1 - dis2));
-  //  }
-  //  y_f += slope;
-  //}
+  for (int i = x_start; i <= x_end; i++) {
+    float y_start = (int)floor(y_f);
+    float y_l = y_f + 0.5f * slope;
+    float y_c = y_start + 0.5f;
+    float dis = abs(y_c - y_l);
+    float dis2;
+    int index;
+    if (abs(y_c + 1 - y_l) < abs(y_c - 1 - y_l)) {
+      index = 1;
+      dis2 = abs(y_c + 1 - y_l);
+    }
+    else {
+      index = -1;
+      dis2 = abs(y_c - 1 - y_l);
+    }
+    if (steep) {
+      rasterize_point(y_start, i, color * (1 - dis));
+      rasterize_point(y_start + index, i, color * (1 - dis2));
+    }
+    else {
+      rasterize_point(i, y_start, color * (1 - dis));
+      rasterize_point(i, y_start + index, color * (1 - dis2));
+    }
+    y_f += slope;
+  }
 }
 
 
