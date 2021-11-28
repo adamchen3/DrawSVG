@@ -238,26 +238,83 @@ void SoftwareRendererImp::rasterize_point( float x, float y, Color color ) {
 
 }
 
+float point_to_line_dis(Vector2D p0, Vector2D p1, Vector2D p) {
+  return (float) std::abs((p.x - p0.x) * (-p1.y + p0.y) + (p.y - p0.y) * (p1.x - p0.x)) / (p1 - p0).norm();
+}
+
+bool coverage(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y) {
+  float w1 = (x0 * (y2 - y0) + (y - y0) * (x2 - x0) - x * (y2 - y0)) / ((y1 - y0) * (x2 - x0) - (x1 - x0) * (y2 - y0));
+  float w2 = (y - y0 - w1 * (y1 - y0)) / (y2 - y0);
+  return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
+}
+
+void SoftwareRendererImp::draw_triangle(Vector2D p0, Vector2D p1, Vector2D t0, Vector2D t1, Vector2D t2, Color color, int width = 2) {
+  float minx = std::min({ t0.x, t1.x, t2.x });
+  float maxx = std::max({ t0.x, t1.x, t2.x });
+  float miny = std::min({ t0.y, t1.y, t2.y });
+  float maxy = std::max({ t0.y, t1.y, t2.y });
+  int xstart = (int)floor(minx);
+  int xend = (int)ceil(maxx);
+  int ystart = (int)floor(miny);
+  int yend = (int)ceil(maxy);
+  for (int x = xstart; x < xend; x++) {
+    for (int y = ystart; y < yend; y++) {
+      float dis = point_to_line_dis(p0, p1, { x + 0.5f, y + 0.5f });
+      float factor = dis * 2 / width;
+      if (coverage(t0.x, t0.y, t1.x, t1.y, t2.x, t2.y, x + 0.5f, y + 0.5f)) {
+        rasterize_point(x, y, color * (1 - factor));
+      }
+    }
+  }
+}
+
 void SoftwareRendererImp::rasterize_line( float x0, float y0,
                                           float x1, float y1,
                                           Color color) {
 
   // Task 2: 
   // Implement line rasterization
-  int  x_start, x_end, y_start;
-  bool steep = false; // 是不是以y方向为递增
-  float dy = abs(y0 - y1);
-  float dx = abs(x0 - x1);
-  if (dy > dx) {
-    std::swap(x0, y0);
-  std:swap(x1, y1);
-    steep = true;
+
+  // Draw line as a triangle
+  // 先处理特殊情况
+  if (x0 == x1) {
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - 1, y0 }, { x0 + 1, y0 }, { x1 + 1, y1 }, color);
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + 1, y1 }, { x1 - 1, y1 }, { x0 - 1, y0 }, color);
+  }
+  else if (y0 == y1) {
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x0, y0 - 1 }, { x1, y1 - 1 }, { x1, y1 + 1 }, color);
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x1, y1 + 1 }, { x0, y0 + 1 }, { x0, y0 - 1 }, color);
+  }
+  else {
+    Vector2D v0{ -1, 0 };
+    Vector2D v1{x1 - x0, y1 - y0};
+    float offsetY = (float)std::abs(dot(v0, v1) / v1.norm());
+    float slope = y1 - y0 / x1 - x0;
+    Vector2D v2{ 1, -1 / slope };
+    Vector2D v3{ 1, 0 };
+    float offsetX = (float)std::abs(dot(v2, v3) / v2.norm());
+    if (slope > 0) {
+      offsetY = -offsetY;
+    }
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x0 - offsetX, y0 - offsetY }, { x0 + offsetX, y0 + offsetY  }, { x1 + offsetX, y1 + offsetY }, color);
+    draw_triangle({ x0, y0 }, { x1, y1 }, { x1 + offsetX, y1 + offsetY }, { x1 - offsetX, y1 - offsetY }, { x0 - offsetX , y0 - offsetY }, color);
   }
 
-  if (x0 > x1) {
-    std::swap(x0, x1);
-    std::swap(y0, y1);
-  }
+
+  //int  x_start, x_end, y_start;
+  //bool steep = false; // 是不是以y方向为递增
+  //float dy = abs(y0 - y1);
+  //float dx = abs(x0 - x1);
+  //if (dy > dx) {
+  //  std::swap(x0, y0);
+  //std:swap(x1, y1);
+  //  steep = true;
+  //}
+
+  //if (x0 > x1) {
+  //  std::swap(x0, x1);
+  //  std::swap(y0, y1);
+  //}
 
   /** Bresenham start **/
   //dy = y1 - y0;
@@ -284,45 +341,40 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
   /** Bresenham end **/
 
   /** Xiaolin Wu's line algorithm */
-  dy = y1 - y0;
-  dx = x1 - x0;
-  x_start = (int)round(x0);
-  x_end = (int)round(x1);
-  float slope = dy / dx;
-  float y_f = y0 + slope * (x_start - x0);
+  //dy = y1 - y0;
+  //dx = x1 - x0;
+  //x_start = (int)round(x0);
+  //x_end = (int)round(x1);
+  //float slope = dy / dx;
+  //float y_f = y0 + slope * (x_start - x0);
 
-  for (int i = x_start; i <= x_end; i++) {
-    float y_start = (int)floor(y_f);
-    float y_l = y_f + 0.5f * slope;
-    float y_c = y_start + 0.5f;
-    float dis = abs(y_c - y_l);
-    float dis2;
-    int index;
-    if (abs(y_c + 1 - y_l) < abs(y_c - 1 - y_l)) {
-      index = 1;
-      dis2 = abs(y_c + 1 - y_l);
-    }
-    else {
-      index = -1;
-      dis2 = abs(y_c - 1 - y_l);
-    }
-    if (steep) {
-      rasterize_point(y_start, i, color * (1 - dis));
-      rasterize_point(y_start + index, i, color * (1 - dis2));
-    }
-    else {
-      rasterize_point(i, y_start, color * (1 - dis));
-      rasterize_point(i, y_start + index, color * (1 - dis2));
-    }
-    y_f += slope;
-  }
+  //for (int i = x_start; i <= x_end; i++) {
+  //  float y_start = (int)floor(y_f);
+  //  float y_l = y_f + 0.5f * slope;
+  //  float y_c = y_start + 0.5f;
+  //  float dis = abs(y_c - y_l);
+  //  float dis2;
+  //  int index;
+  //  if (abs(y_c + 1 - y_l) < abs(y_c - 1 - y_l)) {
+  //    index = 1;
+  //    dis2 = abs(y_c + 1 - y_l);
+  //  }
+  //  else {
+  //    index = -1;
+  //    dis2 = abs(y_c - 1 - y_l);
+  //  }
+  //  if (steep) {
+  //    rasterize_point(y_start, i, color * (1 - dis));
+  //    rasterize_point(y_start + index, i, color * (1 - dis2));
+  //  }
+  //  else {
+  //    rasterize_point(i, y_start, color * (1 - dis));
+  //    rasterize_point(i, y_start + index, color * (1 - dis2));
+  //  }
+  //  y_f += slope;
+  //}
 }
 
-bool coverage(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y) {
-  float w1 = (x0 * (y2 - y0) + (y - y0) * (x2 - x0) - x * (y2 - y0)) / ((y1 - y0) * (x2 - x0) - (x1 - x0) * (y2 - y0));
-  float w2 = (y - y0 - w1 * (y1 - y0)) / (y2 - y0);
-  return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
-}
 
 void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
                                               float x1, float y1,

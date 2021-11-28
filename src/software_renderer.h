@@ -130,6 +130,8 @@ class SoftwareRendererImp : public SoftwareRenderer {
                         float x1, float y1,
                         Texture& tex );
 
+  void draw_triangle(Vector2D, Vector2D, Vector2D, Vector2D, Vector2D, Color, int);
+
   // resolve samples to render target
   void resolve( void );
 
