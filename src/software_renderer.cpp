@@ -375,10 +375,10 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
 }
 
 
-void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
-                                              float x1, float y1,
-                                              float x2, float y2,
-                                              Color color ) {
+void SoftwareRendererImp::rasterize_triangle(float x0, float y0,
+  float x1, float y1,
+  float x2, float y2,
+  Color color) {
   // Task 3: 
   // Implement triangle rasterization
   // 
@@ -395,10 +395,90 @@ void SoftwareRendererImp::rasterize_triangle( float x0, float y0,
   int xend = (int)ceil(maxx);
   int ystart = (int)floor(miny);
   int yend = (int)ceil(maxy);
-  for (int x = xstart; x < xend; x++) {
-    for (int y = ystart; y < yend; y++) {
-      if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y + 0.5f)) {
-        rasterize_point(x, y, color);
+
+  // using blockwise method
+  const int blocksize = 16;
+  for (int offsetX = 0; xstart + offsetX < xend; offsetX += blocksize) {
+    for (int offsetY = 0; ystart + offsetY < yend; offsetY += blocksize) {
+      int x_lt = xstart + offsetX;
+      int y_lt = ystart + offsetY;
+      int x_rt = std::min(x_lt + blocksize, xend);
+      int y_rt = ystart + offsetY;
+      int x_lb = xstart + offsetX;
+      int y_lb = std::min(y_lt + blocksize, yend);
+      int x_rb = x_rt;
+      int y_rb = y_lb;
+      bool all_in_tri = true;
+      bool all_out_tri = true;
+
+      for (int x = x_lt; x < x_rt; x++) {
+        if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y_lt + 0.5f)) {
+          all_out_tri = false;
+        }
+        else {
+          all_in_tri = false;
+        }
+        if (!all_out_tri && !all_in_tri) {
+          goto check_and_draw_tri;
+        }
+      }
+
+      for (int x = x_lb; x < x_rb; x++) {
+        if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y_lb + 0.5f)) {
+          all_out_tri = false;
+        }
+        else {
+          all_in_tri = false;
+        }
+        if (!all_out_tri && !all_in_tri) {
+          goto check_and_draw_tri;
+        }
+      }
+
+      for (int y = y_lt; y < y_lb; y++) {
+        if (coverage(x0, y0, x1, y1, x2, y2, x_lt + 0.5f, y + 0.5f)) {
+          all_out_tri = false;
+        }
+        else {
+          all_in_tri = false;
+        }
+        if (!all_out_tri && !all_in_tri) {
+          goto check_and_draw_tri;
+        }
+      }
+
+      for (int y = y_rt; y < y_rb; y++) {
+        if (coverage(x0, y0, x1, y1, x2, y2, x_rt + 0.5f, y + 0.5f)) {
+          all_out_tri = false;
+        }
+        else {
+          all_in_tri = false;
+        }
+        if (!all_out_tri && !all_in_tri) {
+          goto check_and_draw_tri;
+        }
+      }
+
+      if (all_out_tri) {
+        continue;
+      }
+
+      if (all_in_tri) {
+        for (int x = x_lt; x < x_rt; x++) {
+          for (int y = y_lt; y < y_lb; y++) {
+            rasterize_point(x, y, color);
+          }
+        }
+        continue;
+      }
+
+check_and_draw_tri:
+      for (int x = x_lt; x < x_rt; x++) {
+        for (int y = y_lt; y < y_lb; y++) {
+          if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y + 0.5f)) {
+            rasterize_point(x, y, color);
+          }
+        }
       }
     }
   }
