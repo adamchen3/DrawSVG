@@ -374,6 +374,41 @@ void SoftwareRendererImp::rasterize_line( float x0, float y0,
   }
 }
 
+bool line_segment_interset(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3) {
+  float ax = x1 - x0;
+  float ay = y1 - y0;
+  float bx = x3 - x2;
+  float by = y3 - y2;
+  float cx = x0 - x2;
+  float cy = y0 - y2;
+  float denominator = ay * bx - ax * by;
+  float numerator = by * cx - bx * cy;
+  if (denominator == 0) {
+    return true;
+  }
+  else if (denominator < 0) {
+    if (numerator <= 0 && numerator >= denominator) {
+      return true;
+    }
+  }
+  else if (denominator > 0) {
+    if (numerator >= 0 && numerator <= denominator) {
+      return true;
+    }
+  }
+  numerator = ax * cy - ay * cx;
+  if (denominator < 0) {
+    if (numerator <= 0 && numerator >= denominator) {
+      return true;
+    }
+  }
+  else if (denominator > 0) {
+    if (numerator >= 0 && numerator <= denominator) {
+      return true;
+    }
+  }
+  return false;
+}
 
 void SoftwareRendererImp::rasterize_triangle(float x0, float y0,
   float x1, float y1,
@@ -408,69 +443,64 @@ void SoftwareRendererImp::rasterize_triangle(float x0, float y0,
       int y_lb = std::min(y_lt + blocksize, yend);
       int x_rb = x_rt;
       int y_rb = y_lb;
-      bool all_in_tri = true;
-      bool all_out_tri = true;
 
-      for (int x = x_lt; x < x_rt; x++) {
-        if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y_lt + 0.5f)) {
-          all_out_tri = false;
-        }
-        else {
-          all_in_tri = false;
-        }
-        if (!all_out_tri && !all_in_tri) {
-          goto check_and_draw_tri;
-        }
+      if (line_segment_interset(x_lt, y_lt, x_rt, y_rt, x0, y0, x1, y1)) {
+        goto check_and_draw_tri;
       }
 
-      for (int x = x_lb; x < x_rb; x++) {
-        if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y_lb + 0.5f)) {
-          all_out_tri = false;
-        }
-        else {
-          all_in_tri = false;
-        }
-        if (!all_out_tri && !all_in_tri) {
-          goto check_and_draw_tri;
-        }
+      if (line_segment_interset(x_lt, y_lt, x_rt, y_rt, x1, y1, x2, y2)) {
+        goto check_and_draw_tri;
       }
 
-      for (int y = y_lt; y < y_lb; y++) {
-        if (coverage(x0, y0, x1, y1, x2, y2, x_lt + 0.5f, y + 0.5f)) {
-          all_out_tri = false;
-        }
-        else {
-          all_in_tri = false;
-        }
-        if (!all_out_tri && !all_in_tri) {
-          goto check_and_draw_tri;
-        }
+      if (line_segment_interset(x_lt, y_lt, x_rt, y_rt, x2, y2, x0, y0)) {
+        goto check_and_draw_tri;
       }
 
-      for (int y = y_rt; y < y_rb; y++) {
-        if (coverage(x0, y0, x1, y1, x2, y2, x_rt + 0.5f, y + 0.5f)) {
-          all_out_tri = false;
-        }
-        else {
-          all_in_tri = false;
-        }
-        if (!all_out_tri && !all_in_tri) {
-          goto check_and_draw_tri;
-        }
+      if (line_segment_interset(x_lt, y_lt, x_lb, y_lb, x0, y0, x1, y1)) {
+        goto check_and_draw_tri;
       }
 
-      if (all_out_tri) {
-        continue;
+      if (line_segment_interset(x_lt, y_lt, x_lb, y_lb, x1, y1, x2, y2)) {
+        goto check_and_draw_tri;
       }
 
-      if (all_in_tri) {
+      if (line_segment_interset(x_lt, y_lt, x_lb, y_lb, x2, y2, x0, y0)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_rt, y_rt, x_rb, y_rb, x0, y0, x1, y1)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_rt, y_rt, x_rb, y_rb, x1, y1, x2, y2)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_rt, y_rt, x_rb, y_rb, x2, y2, x0, y0)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_lb, y_lb, x_rb, y_rb, x0, y0, x1, y1)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_lb, y_lb, x_rb, y_rb, x1, y1, x2, y2)) {
+        goto check_and_draw_tri;
+      }
+
+      if (line_segment_interset(x_lb, y_lb, x_rb, y_rb, x2, y2, x0, y0)) {
+        goto check_and_draw_tri;
+      }
+
+      if (coverage(x0, y0, x1, y1, x2, y2, x_lt, y_lt)) {
         for (int x = x_lt; x < x_rt; x++) {
           for (int y = y_lt; y < y_lb; y++) {
             rasterize_point(x, y, color);
           }
         }
-        continue;
       }
+
+      continue;
 
 check_and_draw_tri:
       for (int x = x_lt; x < x_rt; x++) {
