@@ -79,6 +79,8 @@ class SoftwareRendererImp : public SoftwareRenderer {
                           size_t width, size_t height );
 
  private:
+  std::vector<unsigned char> sample_buffer;
+  size_t buffer_w; size_t buffer_h;
 
   // Primitive Drawing //
 
@@ -110,6 +112,8 @@ class SoftwareRendererImp : public SoftwareRenderer {
   void draw_group( Group& group );
 
   // Rasterization //
+
+  void rasterize_sample_point(float x, float y, Color color);
 
   // rasterize a point
   void rasterize_point( float x, float y, Color color );
