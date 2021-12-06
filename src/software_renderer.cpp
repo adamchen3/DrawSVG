@@ -271,10 +271,33 @@ float point_to_line_dis(Vector2D p0, Vector2D p1, Vector2D p) {
   return (float) std::abs((p.x - p0.x) * (-p1.y + p0.y) + (p.y - p0.y) * (p1.x - p0.x)) / (p1 - p0).norm();
 }
 
+float sign(float x0, float y0, float x1, float y1, float x2, float y2)
+{
+  return (x0 - x2) * (y1 - y2) - (x1 - x2) * (y0 - y2);
+}
+
+bool PointInTriangle(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y)
+{
+  float d1, d2, d3;
+  bool has_neg, has_pos;
+
+  d1 = sign(x, y, x0, y0, x1, y1);
+  d2 = sign(x, y, x1, y1, x2, y2);
+  d3 = sign(x, y, x2, y2, x0, y0);
+
+  has_neg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+  has_pos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+
+  return !(has_neg && has_pos);
+}
+
 bool coverage(float x0, float y0, float x1, float y1, float x2, float y2, float x, float y) {
-  float w1 = (x0 * (y2 - y0) + (y - y0) * (x2 - x0) - x * (y2 - y0)) / ((y1 - y0) * (x2 - x0) - (x1 - x0) * (y2 - y0));
-  float w2 = (y - y0 - w1 * (y1 - y0)) / (y2 - y0);
-  return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
+  return PointInTriangle(x0, y0, x1, y1, x2, y2, x, y);
+
+  // the below method has bug
+  //float w1 = (x0 * (y2 - y0) + (y - y0) * (x2 - x0) - x * (y2 - y0)) / ((y1 - y0) * (x2 - x0) - (x1 - x0) * (y2 - y0));
+  //float w2 = (y - y0 - w1 * (y1 - y0)) / (y2 - y0);
+  //return w1 >= 0 && w2 >= 0 && (w1 + w2) <= 1;
 }
 
 void SoftwareRendererImp::draw_triangle(Vector2D p0, Vector2D p1, Vector2D t0, Vector2D t1, Vector2D t2, Color color, int width = 2) {
@@ -459,11 +482,12 @@ void SoftwareRendererImp::rasterize_triangle(float x0, float y0,
   x2 *= sample_rate;
   y2 *= sample_rate;
 
-  // using bounding box
+  // draw triangle outline
   //rasterize_line(x0, y0, x1, y1, color);
   //rasterize_line(x1, y1, x2, y2, color);
   //rasterize_line(x2, y2, x0, y0, color);
   //return;
+
   float minx = std::min({ x0, x1, x2 });
   float maxx = std::max({ x0, x1, x2 });
   float miny = std::min({ y0, y1, y2 });
@@ -472,6 +496,16 @@ void SoftwareRendererImp::rasterize_triangle(float x0, float y0,
   int xend = (int)ceil(maxx);
   int ystart = (int)floor(miny);
   int yend = (int)ceil(maxy);
+
+  // using all bounding box
+  //for (int x = xstart; x < xend; x++) {
+  //  for (int y = ystart; y < yend; y++) {
+  //    if (coverage(x0, y0, x1, y1, x2, y2, x + 0.5f, y + 0.5f)) {
+  //      rasterize_sample_point(x, y, color);
+  //    }
+  //  }
+  //}
+  //return;
 
   // using blockwise method
   const int blocksize = 16;
