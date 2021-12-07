@@ -17,12 +17,15 @@ namespace CMU462 {
 void SoftwareRendererImp::draw_svg( SVG& svg ) {
 
   // set top level transformation
-  transformation = svg_2_screen;
+  //transformation = svg_2_screen;
 
   // draw all elements
   for ( size_t i = 0; i < svg.elements.size(); ++i ) {
+    transformation = svg_2_screen;
     draw_element(svg.elements[i]);
   }
+
+  transformation = svg_2_screen;
 
   // draw canvas outline
   Vector2D a = transform(Vector2D(    0    ,     0    )); a.x--; a.y--;
@@ -71,7 +74,7 @@ void SoftwareRendererImp::draw_element( SVGElement* element ) {
 
   // Task 5 (part 1):
   // Modify this to implement the transformation stack
-
+  transformation = transformation * element->transform;
   switch(element->type) {
     case POINT:
       draw_point(static_cast<Point&>(*element));
@@ -217,7 +220,9 @@ void SoftwareRendererImp::draw_image( Image& image ) {
 
 void SoftwareRendererImp::draw_group( Group& group ) {
 
+  Matrix3x3 groupTransformation = transformation;
   for ( size_t i = 0; i < group.elements.size(); ++i ) {
+    transformation = groupTransformation;
     draw_element(group.elements[i]);
   }
 
