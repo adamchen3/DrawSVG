@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="1200"
+   height="1200"
+   viewBox="0 0 1200 1200"
+   version="1.1"
+   id="svg15326"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="test05.svg.2015_08_26_00_51_43.0.svg">
+  <metadata
+     id="metadata15338">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs15336" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1156"
+     inkscape:window-height="947"
+     id="namedview15334"
+     showgrid="false"
+     inkscape:zoom="0.4"
+     inkscape:cx="665.78534"
+     inkscape:cy="666.10328"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg15326" />
+  <desc
+     id="desc15328">Example polygon01 - star and hexagon</desc>
+   <!-- <polygon fill="#ff0000" points="0,0 1000,0 1000,1000 0,1000 "/> -->
+  <!-- <polygon
+     points="469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161 350,75 379,161 "
+     id="polygon15330"
+     fill="#00bfff" /> -->
+     <g
+     id="g3095"
+     transform="matrix(0.58567639,0,0,0.58567639,173.47672,220.14558)">
+    <polygon
+       transform="matrix(0.70002789,0,0,0.89582406,133.78879,303.64769)"
+       fill="#ff4000" stroke="#666666" stroke-width="10"
+       id="polygon3083"
+       points="742,137.5 850,75 958,137.5 958,262.5 850,325 742,262.6 " />
+    <!-- <polygon
+       fill="#00bfff" stroke="#666666" stroke-width="10"
+       transform="matrix(0.80560036,0,0,0.8483756,446.78987,139.25539)"
+       id="polygon3085"
+       points="469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161 350,75 379,161 " /> -->
+  </g>
+</svg>
