@@ -8,9 +8,9 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="1200"
-   height="1200"
-   viewBox="0 0 1200 1200"
+   width="600"
+   height="600"
+   viewBox="0 0 600 600"
    version="1.1"
    id="svg15326"
    inkscape:version="0.48.4 r9939"
@@ -50,24 +50,8 @@
      inkscape:current-layer="svg15326" />
   <desc
      id="desc15328">Example polygon01 - star and hexagon</desc>
-   <!-- <polygon fill="#ff0000" points="0,0 1000,0 1000,1000 0,1000 "/> -->
-  <!-- <polygon
-     points="469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161 350,75 379,161 "
-     id="polygon15330"
-     fill="#00bfff" /> -->
-     <g
-     id="g3095"
-     transform="matrix(0.58567639,0,0,0.58567639,173.47672,220.14558)">
-    <polygon
-       transform="matrix(0.70002789,0,0,0.89582406,133.78879,303.64769)"
-       fill="#ff4000" stroke="#666666" stroke-width="10"
-       id="polygon3083"
-       points="742,137.5 850,75 958,137.5 958,262.5 850,325 742,262.6 " />
-    <!-- <polygon
-       fill="#00bfff" stroke="#666666" stroke-width="10"
-       transform="matrix(0.80560036,0,0,0.8483756,446.78987,139.25539)"
-       id="polygon3085"
-       points="469,161 397,215 423,301 350,250 277,301 303,215 231,161 321,161 350,75 379,161 " /> -->
-  </g>
-  <line fill="none" stroke="#000000" stroke-width="0.8" stroke-miterlimit="10" x1="-120" y1="-120" x2="0" y2="0"/>
+  <rect x="0" y="0" fill="#1b1f8a" width="10" height="10"/>
+  <rect x="0" y="590" fill="#1b1f8a" width="10" height="10"/>
+  <rect x="590" y="0" fill="#1b1f8a" width="10" height="10"/>
+  <rect x="590" y="590" fill="#1b1f8a" width="10" height="10"/>
 </svg>
