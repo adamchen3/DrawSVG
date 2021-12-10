@@ -11,7 +11,9 @@ void ViewportImp::set_viewbox( float centerX, float centerY, float vspan ) {
   // arguments are defined as normalized SVG canvas coordinates.
   this->centerX = centerX;
   this->centerY = centerY;
-  this->vspan = vspan; 
+  this->vspan = vspan;
+  double matrix[] = { 1.f / (2 * vspan), 0.f, (vspan - centerX) / (2 * vspan), 0.f, 1.f / (2 * vspan), (vspan - centerY) / (2 * vspan), 0.f, 0.f, 1.f };
+  set_svg_2_norm(Matrix3x3(matrix));
 
 }
 
