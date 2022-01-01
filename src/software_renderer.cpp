@@ -606,13 +606,15 @@ void SoftwareRendererImp::rasterize_image( float x0, float y0,
   int yend = (int)round(y1 + 0.5f);
   int width = xend - xstart;
   int height = yend - ystart;
+  float scale = max(width, height) * 1.f / max(tex.width, tex.height);
 
   for (int x = xstart; x < xend; x++) {
     for (int y = ystart; y < yend; y++) {
       float u = ((x - xstart) * 1.f + .5f) / width;
       float v = ((y - ystart) * 1.f + .5f) / height;
       //rasterize_point(x, y, sampler->sample_nearest(tex, u, v, 0));
-      rasterize_point(x, y, sampler->sample_bilinear(tex, u, v, 0));
+      //rasterize_point(x, y, sampler->sample_bilinear(tex, u, v, 0));
+      rasterize_point(x, y, sampler->sample_trilinear(tex, u, v, scale, scale));
     }
   }
 }
