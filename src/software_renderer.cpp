@@ -240,10 +240,31 @@ void SoftwareRendererImp::rasterize_sample_point(float x, float y, Color color) 
   if (sy < 0 || sy >= buffer_h) return;
 
   // fill sample - NOT doing alpha blending!
-  sample_buffer[4 * (sx + sy * buffer_w)] = (uint8_t)(color.r * 255);
-  sample_buffer[4 * (sx + sy * buffer_w) + 1] = (uint8_t)(color.g * 255);
-  sample_buffer[4 * (sx + sy * buffer_w) + 2] = (uint8_t)(color.b * 255);
-  sample_buffer[4 * (sx + sy * buffer_w) + 3] = (uint8_t)(color.a * 255);
+  //sample_buffer[4 * (sx + sy * buffer_w)] = (uint8_t)(color.r * 255);
+  //sample_buffer[4 * (sx + sy * buffer_w) + 1] = (uint8_t)(color.g * 255);
+  //sample_buffer[4 * (sx + sy * buffer_w) + 2] = (uint8_t)(color.b * 255);
+  //sample_buffer[4 * (sx + sy * buffer_w) + 3] = (uint8_t)(color.a * 255);
+
+  // doing alpha blending using premultiplied alpha method
+  float r = sample_buffer[4 * (sx + sy * buffer_w)] / 255.f;
+  float g = sample_buffer[4 * (sx + sy * buffer_w) + 1] / 255.f;
+  float b = sample_buffer[4 * (sx + sy * buffer_w) + 2] / 255.f;
+  float a = sample_buffer[4 * (sx + sy * buffer_w) + 3] / 255.f;
+
+  r *= a; g *= a; b *= a;
+  color.r *= color.a; color.g *= color.a; color.b *= color.a;
+  float ac = color.a + (1 - color.a) * a;
+  float cr = color.r + (1 - color.a) * r;
+  float cg = color.g + (1 - color.a) * g;
+  float cb = color.b + (1 - color.a) * b;
+  cr /= ac;
+  cg /= ac;
+  cb /= ac;
+  sample_buffer[4 * (sx + sy * buffer_w)] = (uint8_t)(cr * 255);
+  sample_buffer[4 * (sx + sy * buffer_w) + 1] = (uint8_t)(cg * 255);
+  sample_buffer[4 * (sx + sy * buffer_w) + 2] = (uint8_t)(cb * 255);
+  sample_buffer[4 * (sx + sy * buffer_w) + 3] = (uint8_t)(ac * 255);
+
 }
 
 // The input arguments in the rasterization functions 
