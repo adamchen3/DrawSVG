@@ -600,19 +600,19 @@ void SoftwareRendererImp::rasterize_image( float x0, float y0,
                                            Texture& tex ) {
   // Task 6: 
   // Implement image rasterization
-  int xstart = (int)floor(x0);
-  int ystart = (int)floor(y0);
-  int xend = (int)floor(x1);
-  int yend = (int)floor(y1);
+  int xstart = (int)floor(x0 + 0.5f);
+  int ystart = (int)floor(y0 + 0.5f);
+  int xend = (int)round(x1 + 0.5f);
+  int yend = (int)round(y1 + 0.5f);
   int width = xend - xstart;
   int height = yend - ystart;
 
-  for (int x = xstart; x <= xend; x++) {
-    for (int y = ystart; y <= yend; y++) {
-      int u = (int)((x+0.5f) * tex.width / width);
-      int v = (int)((y+0.5f) * tex.height / height);
-      rasterize_point(x, y, sampler->sample_nearest(tex, u, v, 0));
-      //rasterize_point(x, y, sampler->sample_bilinear(tex, u, v, 0));
+  for (int x = xstart; x < xend; x++) {
+    for (int y = ystart; y < yend; y++) {
+      float u = ((x - xstart) * 1.f + .5f) / width;
+      float v = ((y - ystart) * 1.f + .5f) / height;
+      //rasterize_point(x, y, sampler->sample_nearest(tex, u, v, 0));
+      rasterize_point(x, y, sampler->sample_bilinear(tex, u, v, 0));
     }
   }
 }

@@ -83,6 +83,16 @@ Color Sampler2DImp::sample_nearest(Texture& tex,
                                    int level) {
 
   // Task 6: Implement nearest neighbour interpolation
+  MipLevel mipmap = tex.mipmap[level];
+  int i = (int)floor(u * mipmap.width);
+  int j = (int)floor(v * mipmap.height);
+  int index = i * mipmap.width + j;
+  Color c;
+  c.r = mipmap.texels[index * 4] / 255.f;
+  c.g = mipmap.texels[index * 4 + 1] / 255.f;
+  c.b = mipmap.texels[index * 4 + 2] / 255.f;
+  c.a = mipmap.texels[index * 4 + 3] / 255.f;
+  return c;
   
   // return magenta for invalid level
   return Color(1,0,1,1);
@@ -94,6 +104,103 @@ Color Sampler2DImp::sample_bilinear(Texture& tex,
                                     int level) {
   
   // Task 6: Implement bilinear filtering
+  MipLevel mipmap = tex.mipmap[level];
+  int i = (int)floor(u * mipmap.width - 0.5f);
+  int j = (int)floor(v * mipmap.height - 0.5f);
+  float s = u * mipmap.width - (i + 0.5f);
+  float t = v * mipmap.height - (j + 0.5f);
+
+  int a = i, b = j;
+  if (a < 0) {
+    a = mipmap.width - 1;
+  }
+  else if (a >= mipmap.width) {
+    a = 0;
+  }
+  if (b < 0) {
+    b = mipmap.height - 1;
+  }
+  else if (b >= mipmap.height) {
+    b = 0;
+  }
+  int index00 = a * mipmap.width + b;
+
+  a = i + 1; b = j;
+  if (a < 0) {
+    a = mipmap.width - 1;
+  }
+  else if (a >= mipmap.width) {
+    a = 0;
+  }
+  if (b < 0) {
+    b = mipmap.height - 1;
+  }
+  else if (b >= mipmap.height) {
+    b = 0;
+  }
+  int index01 = a * mipmap.width + b;
+
+  a = i; b = j + 1;
+  if (a < 0) {
+    a = mipmap.width - 1;
+  }
+  else if (a >= mipmap.width) {
+    a = 0;
+  }
+  if (b < 0) {
+    b = mipmap.height - 1;
+  }
+  else if (b >= mipmap.height) {
+    b = 0;
+  }
+  int index10 = a * mipmap.width + b;
+
+  a = i + 1; b = j + 1;
+  if (a < 0) {
+    a = mipmap.width - 1;
+  }
+  else if (a >= mipmap.width) {
+    a = 0;
+  }
+  if (b < 0) {
+    b = mipmap.height - 1;
+  }
+  else if (b >= mipmap.height) {
+    b = 0;
+  }
+  int index11 = a * mipmap.width + b;
+
+  Color c00;
+  c00.r = mipmap.texels[index00 * 4] / 255.f;
+  c00.g = mipmap.texels[index00 * 4 + 1] / 255.f;
+  c00.b = mipmap.texels[index00 * 4 + 2] / 255.f;
+  c00.a = mipmap.texels[index00 * 4 + 3] / 255.f;
+  Color c10;
+  c10.r = mipmap.texels[index10 * 4] / 255.f;
+  c10.g = mipmap.texels[index10 * 4 + 1] / 255.f;
+  c10.b = mipmap.texels[index10 * 4 + 2] / 255.f;
+  c10.a = mipmap.texels[index10 * 4 + 3] / 255.f;
+  Color c01;
+  c01.r = mipmap.texels[index01 * 4] / 255.f;
+  c01.g = mipmap.texels[index01 * 4 + 1] / 255.f;
+  c01.b = mipmap.texels[index01 * 4 + 2] / 255.f;
+  c01.a = mipmap.texels[index01 * 4 + 3] / 255.f;
+  Color c11;
+  c11.r = mipmap.texels[index11 * 4] / 255.f;
+  c11.g = mipmap.texels[index11 * 4 + 1] / 255.f;
+  c11.b = mipmap.texels[index11 * 4 + 2] / 255.f;
+  c11.a = mipmap.texels[index11 * 4 + 3] / 255.f;
+
+  // PS:别删除下面注释最后的那个.，不然编译不过。傻逼编译器
+  // 系数s和t互换一下，效果也差太远了吧，手动捂脸.
+  Color c0;
+  c0 = (1 - t) * c00 + t * c10;
+  Color c1;
+  c1 = (1 - t) * c01 + t * c11;
+
+  Color c;
+  c = (1 - s) * c0 + s * c1;
+  return c;
 
   // return magenta for invalid level
   return Color(1,0,1,1);
